@@ -58,7 +58,7 @@ DEPS_REL_PATH = $(OBJECTS_REL_PATH:%.o=%.d)
 all: build start
 
 start:
-	./$(PROJECT_NAME).out
+	./$(PROJECT_NAME).out $(OPTS)
 
 build: $(PROJECT_NAME).out
 
@@ -67,11 +67,10 @@ rebuild: clean_all build
 
 
 $(PROJECT_NAME).out: $(OBJECTS_REL_PATH)
-	@$(COMPILER) $(FLAGS) -o $@ $^  
-# -L./libs/logger -llogger
+	@$(COMPILER) $(FLAGS) -o $@ $^  -L./libs/logger -llogger
 
-$(BUILD_DIR)/%.o : $(SRC_DIR)/%.c | ./$(BUILD_DIR)/ $(BUILD_DIRS) # logger_build
-	@$(COMPILER) $(FLAGS) -c -MMD -MP $< -o $@
+$(BUILD_DIR)/%.o : $(SRC_DIR)/%.c | ./$(BUILD_DIR)/ $(BUILD_DIRS) logger_build
+	@$(COMPILER) $(FLAGS) -I./utils -I./libs -c -MMD -MP $< -o $@
 
 -include $(DEPS_REL_PATH)
 
