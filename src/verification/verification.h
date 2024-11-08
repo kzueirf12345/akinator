@@ -4,6 +4,7 @@
 #include <assert.h>
 
 #include "../tree/tree_structs.h"
+#include "logger/liblogger.h"
 
 enum TreeError
 {

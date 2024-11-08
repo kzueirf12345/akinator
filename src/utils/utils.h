@@ -30,5 +30,12 @@ static_assert(PTR_STATES_VALID == 0);
 
 enum PtrState is_invalid_ptr(const void* ptr);
 
+int is_empty_file (FILE* file);
+
+int data_to_str(const void* const data, const size_t size, char* const * str,
+                const size_t str_size);
+
+#define TREE_INOUT_ELEM_CODE "%d"
+#define TREE_INOUT_ELEM_T int
 
 #endif /*ASINATOR_UTILS_UTILS_H*/
