@@ -4,6 +4,7 @@
 #include "logger/liblogger.h"
 #include "tree/tree.h"
 #include "utils.h"
+#include "verification/verification.h"
 
 int compare_int_wrapper(const void* const a, const void* const b);
 int compare_int        (const int         a, const int         b);
@@ -38,10 +39,12 @@ int main(int argc, char* argv[])
                                                                   tree_dtor(&tree); logger_dtor(););
 
     int num = 9;
-    TREE_ERROR_HANDLE(tree_push_node(&tree, tree_node_ctor(&num, sizeof(int), NULL, NULL)), 
+    TREE_ERROR_HANDLE(tree_insert(&tree, tree_node_ctor(&num, sizeof(int))), 
                                                                   tree_dtor(&tree); logger_dtor(););
+
+                                                            
     num = 10;
-    TREE_ERROR_HANDLE(tree_push_node(&tree, tree_node_ctor(&num, sizeof(int), NULL, NULL)), 
+    TREE_ERROR_HANDLE(tree_insert(&tree, tree_node_ctor(&num, sizeof(int))), 
                                                                   tree_dtor(&tree); logger_dtor(););
 
     printf("Hello, world!\n");

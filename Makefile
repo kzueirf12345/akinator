@@ -44,11 +44,13 @@ endif
 
 FLAGS += $(ADD_FLAGS)
 
+LIBS = -L./libs/logger -llogger
 
-DIRS = tree utils
+
+DIRS = tree utils verification
 BUILD_DIRS = $(DIRS:%=$(BUILD_DIR)/%)
 
-SOURCES = main.c tree/tree.c utils/utils.c
+SOURCES = main.c tree/tree.c utils/utils.c verification/verification.c
 
 SOURCES_REL_PATH = $(SOURCES:%=$(SRC_DIR)/%)
 OBJECTS_REL_PATH = $(SOURCES:%.c=$(BUILD_DIR)/%.o)
@@ -67,7 +69,7 @@ rebuild: clean_all build
 
 
 $(PROJECT_NAME).out: $(OBJECTS_REL_PATH)
-	@$(COMPILER) $(FLAGS) -o $@ $^  -L./libs/logger -llogger
+	@$(COMPILER) $(FLAGS) -o $@ $^  $(LIBS)
 
 $(BUILD_DIR)/%.o : $(SRC_DIR)/%.c | ./$(BUILD_DIR)/ $(BUILD_DIRS) logger_build
 	@$(COMPILER) $(FLAGS) -I $(SRC_DIR)/utils -I./libs -c -MMD -MP $< -o $@
