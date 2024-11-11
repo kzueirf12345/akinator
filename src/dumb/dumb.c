@@ -51,7 +51,6 @@ static struct
 
     size_t graph_count;
 } DUMBER_ = {};
-#define MAX_FILENAME_SIZE_ 256
 
 static void DUMBER_is_init_lasserts_(void)
 {
@@ -235,7 +234,7 @@ enum TreeDumbError tree_dumb_set_out_filename_(char*  const filename,
 
     free(*old_filename);
 
-    *old_filename = calloc(MAX_FILENAME_SIZE_, sizeof(char));
+    *old_filename = calloc(FILENAME_MAX_SIZE, sizeof(char));
 
     if (!*old_filename)
     {
@@ -243,7 +242,7 @@ enum TreeDumbError tree_dumb_set_out_filename_(char*  const filename,
         return TREE_DUMB_ERROR_FAILURE;
     }
 
-    if (snprintf(*old_filename, MAX_FILENAME_SIZE_, "%s%s", filename, file_extension) <= 0)
+    if (snprintf(*old_filename, FILENAME_MAX_SIZE, "%s%s", filename, file_extension) <= 0)
     {
         perror("Can't snprintf old_filename");
         return TREE_DUMB_ERROR_FAILURE;
@@ -475,5 +474,3 @@ int insert_tree_svg_(void)
 
     return 0;
 }
-
-#undef MAX_FILENAME_SIZE_
