@@ -5,6 +5,7 @@
 
 #include "../tree/tree_structs.h"
 #include "logger/liblogger.h"
+#include "../dumb/dumb.h"
 
 enum TreeError
 {
@@ -20,6 +21,7 @@ enum TreeError
     TREE_ERROR_NODE_DATA_IS_INVALID = 9,
     TREE_ERROR_NODE_SIZE_IS_ZERO    = 10,
     TREE_ERROR_SIZE_LESSER          = 11,
+    TREE_ERROR_ELEM_TO_STR          = 12,
     TREE_ERROR_UNKNOWN              = 20
 };
 static_assert(TREE_ERROR_SUCCESS == 0);
@@ -43,12 +45,13 @@ const char* tree_strerror(const enum TreeError error);
 
 enum TreeError tree_verify_NOT_USE(const tree_t* const tree);
 
-//FIXME add dumb
+
 #define TREE_VERIFY(tree, elem_to_str)                                                              \
         do {                                                                                        \
             const enum TreeError error = tree_verify_NOT_USE(tree);                                 \
             if (error)                                                                              \
             {                                                                                       \
+                tree_dumb(tree, elem_to_str);                                                       \
                 lassert(false, "Tree error: %s", tree_strerror(error));                             \
             }                                                                                       \
         } while(0)

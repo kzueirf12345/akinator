@@ -97,7 +97,7 @@ void tree_dtor_recursive_(tree_node_t* const tree_node)
 
 
 enum TreeError tree_insert_recursive_(tree_node_t** const tree, tree_node_t* const tree_node,
-                                         const tree_compare_t compare);
+                                      const tree_compare_t compare);
 
 enum TreeError tree_insert(tree_t* const tree, tree_node_t* const tree_node)
 {
@@ -120,7 +120,7 @@ enum TreeError tree_insert(tree_t* const tree, tree_node_t* const tree_node)
 }
 
 enum TreeError tree_insert_recursive_(tree_node_t** const tree, tree_node_t* const tree_node,
-                                         const tree_compare_t compare)
+                                      const tree_compare_t compare)
 {
     lassert(!is_invalid_ptr(tree), "");
     lassert(!is_invalid_ptr(tree_node), "");
@@ -139,6 +139,74 @@ enum TreeError tree_insert_recursive_(tree_node_t** const tree, tree_node_t* con
     else
     {
         TREE_ERROR_HANDLE(tree_insert_recursive_(&(*tree)->rt, tree_node, compare));
+    }
+
+    return TREE_ERROR_SUCCESS;
+}
+
+enum TreeError tree_print_recursive(FILE* out, const tree_node_t* const node, 
+                                    elem_to_str_t elem_to_str);
+
+enum TreeError tree_print(FILE* out, const tree_t* const tree, elem_to_str_t elem_to_str)
+{
+    if (!elem_to_str) elem_to_str = data_to_str;
+
+    lassert(elem_to_str, "");
+    lassert(out, "");
+    TREE_VERIFY(tree, NULL); 
+
+    TREE_ERROR_HANDLE(tree_print_recursive(out, tree->Groot, elem_to_str));
+    fputc('\n', out);
+
+    return TREE_ERROR_SUCCESS;
+}
+
+enum TreeError tree_print_recursive(FILE* out, const tree_node_t* const node,
+                                    elem_to_str_t elem_to_str)
+{
+    if (!elem_to_str) elem_to_str = data_to_str;
+
+    lassert(!is_invalid_ptr(node),       "");
+    lassert(!is_invalid_ptr(node->data), "");
+    lassert(!is_invalid_ptr(out),        "");
+    lassert(                node->size,  "");
+    lassert(                elem_to_str, "");
+
+    if (node->lt)
+    {
+        fputc('(', out);
+        TREE_ERROR_HANDLE(tree_print_recursive(out, node->lt, elem_to_str));
+        fputc(')', out);
+    }
+
+    const size_t data_str_size = 4 * node->size;
+    char* data_str = calloc(data_str_size, sizeof(char));
+
+    if (!data_str)
+    {
+        perror("Can't calloc data_str");
+        return TREE_ERROR_STANDARD_ERRNO;
+    }
+
+    if (elem_to_str(node->data, node->size, &data_str, data_str_size))
+    {
+        fprintf(stderr, "Can't elem_to_str\n");
+        return TREE_ERROR_ELEM_TO_STR;
+    }
+
+    if (fputs(data_str, out) <= 0)
+    {
+        perror("Can't fputs data_str");
+        return TREE_ERROR_STANDARD_ERRNO;
+    }
+
+    free(data_str); data_str = NULL;
+
+    if (node->rt)
+    {
+        fputc('(', out);
+        TREE_ERROR_HANDLE(tree_print_recursive(out, node->rt, elem_to_str));
+        fputc(')', out);
     }
 
     return TREE_ERROR_SUCCESS;

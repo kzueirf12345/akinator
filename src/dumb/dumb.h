@@ -4,6 +4,7 @@
 #include <assert.h>
 
 #include "../tree/tree_structs.h"
+#include "utils.h"
 
 enum TreeDumbError
 {
@@ -29,13 +30,7 @@ const char* tree_dumb_strerror(const enum TreeDumbError error);
 enum TreeDumbError tree_dumb_ctor(void);
 enum TreeDumbError tree_dumb_dtor(void);
 
-enum TreeDumbError tree_dumb_set_out_html_file           (const char* const filename);
-enum TreeDumbError tree_dumb_set_out_dot_file            (const char* const filename);
-enum TreeDumbError tree_dumb_set_out_svg_file            (const char* const filename);
-enum TreeDumbError tree_dumb_set_out_graph_count_file    (const char* const filename);
-
-typedef int (*elem_to_str_t) (const void* const elem, const size_t   elem_size,
-                              char* const *     str,  const size_t mx_str_size);
+enum TreeDumbError tree_dumb_set_out_file(char* const filename);
 
 void tree_dumb (const tree_t* const tree, elem_to_str_t elem_to_str);
 

@@ -39,16 +39,19 @@ const char* tree_dumb_strerror(const enum TreeDumbError error)
 
 static struct 
 {
-    const char* html_name;
-    const char* dot_name;
-    const char* svg_name;
-    const char* graph_count_name;
+    char* out_name;
+
+    char* html_name;
+    char* dot_name;
+    char* svg_name;
+    char* graph_count_name;
 
     FILE* dot_file;
     FILE* html_file;
 
     size_t graph_count;
 } DUMBER_ = {};
+#define MAX_FILENAME_SIZE_ 256
 
 static void DUMBER_is_init_lasserts_(void)
 {
@@ -60,30 +63,16 @@ static void DUMBER_is_init_lasserts_(void)
     lassert(DUMBER_.graph_count_name,   "DUMBER_ is not init");
 }
 
+
 enum TreeDumbError tree_dumb_ctor(void)
 {
     lassert(!DUMBER_.html_name         || !DUMBER_.html_file, "");
     lassert(!DUMBER_.dot_name          || !DUMBER_.dot_file,  "");
     lassert(!DUMBER_.svg_name,                                "");
     lassert(!DUMBER_.graph_count_name,                        "");
+    lassert(!DUMBER_.out_name,                                "");
 
-    DUMBER_.html_name = "./log/dumb.html";
-    if (!(DUMBER_.html_file = fopen(DUMBER_.html_name, "ab")))
-    {
-        perror("Can't open html_file");
-        return TREE_DUMB_ERROR_FAILURE;
-    }
-
-    DUMBER_.dot_name = "./log/dumb.dot";
-    if (!(DUMBER_.dot_file = fopen(DUMBER_.dot_name, "wb")))
-    {
-        perror("Can't open dot_file");
-        return TREE_DUMB_ERROR_FAILURE;
-    }
-
-    DUMBER_.svg_name = "./log/dumb";
-
-    DUMBER_.graph_count_name = "./log/graph_count.txt";
+    TREE_DUMB_ERROR_HANDLE(tree_dumb_set_out_file("./log/dumb"));
 
     return TREE_DUMB_ERROR_SUCCESS;
 }
@@ -102,18 +91,18 @@ enum TreeDumbError tree_dumb_dtor(void)
         perror("Can't close html_file");
         return TREE_DUMB_ERROR_FAILURE;
     }
-    IF_DEBUG(DUMBER_.html_name = NULL;)
 
     if (fclose(DUMBER_.dot_file))
     {
         perror("Can't close dot_file");
         return TREE_DUMB_ERROR_FAILURE;
     }
-    IF_DEBUG(DUMBER_.dot_name = NULL;)
 
-    IF_DEBUG(DUMBER_.svg_name = NULL;)
-
-    IF_DEBUG(DUMBER_.graph_count_name = NULL;)
+    free(DUMBER_.out_name);         IF_DEBUG(DUMBER_.out_name           = NULL;)
+    free(DUMBER_.html_name);        IF_DEBUG(DUMBER_.html_name          = NULL;)
+    free(DUMBER_.dot_name);         IF_DEBUG(DUMBER_.dot_name           = NULL;)
+    free(DUMBER_.svg_name);         IF_DEBUG(DUMBER_.svg_name           = NULL;)
+    free(DUMBER_.graph_count_name); IF_DEBUG(DUMBER_.graph_count_name   = NULL;)
 
     return TREE_DUMB_ERROR_SUCCESS;
 }
@@ -182,34 +171,45 @@ enum TreeDumbError write_graph_count_in_file_(void)
 
 //==========================================================================================
 
-enum TreeDumbError tree_dumb_set_out_file_(const char*  const filename, FILE** const file, 
-                                  const char** const old_filename, const char* const mode);
+enum TreeDumbError tree_dumb_set_out_file_(char*  const filename, FILE** const file, 
+                                           char** const old_filename, const char* const mode,
+                                           const char*  const file_extension);
 
-enum TreeDumbError tree_dumb_set_out_html_file(const char* const filename)
+enum TreeDumbError tree_dumb_set_out_filename_(char*  const filename, 
+                                               const char*  const file_extension,
+                                               char** const old_filename);
+
+enum TreeDumbError tree_dumb_set_out_file(char* const filename)
 {
-    DUMBER_is_init_lasserts_();
     lassert(filename, "");
 
-    return tree_dumb_set_out_file_(filename, &DUMBER_.html_file, &DUMBER_.html_name, "ab");
+    TREE_DUMB_ERROR_HANDLE(
+        tree_dumb_set_out_file_(filename, &DUMBER_.html_file, &DUMBER_.html_name, "ab", ".html")
+    );
+    TREE_DUMB_ERROR_HANDLE(
+        tree_dumb_set_out_file_(filename, &DUMBER_.dot_file,  &DUMBER_.dot_name,  "wb", ".dot")
+    );
+
+    TREE_DUMB_ERROR_HANDLE(tree_dumb_set_out_filename_(filename, "",     &DUMBER_.out_name));
+    TREE_DUMB_ERROR_HANDLE(tree_dumb_set_out_filename_(filename, ".svg", &DUMBER_.svg_name));
+    TREE_DUMB_ERROR_HANDLE(tree_dumb_set_out_filename_(filename, "_graph_count.txt", 
+                                                       &DUMBER_.graph_count_name));
+
+    TREE_DUMB_ERROR_HANDLE(set_graph_count_());
+
+    return TREE_DUMB_ERROR_SUCCESS;
 }
 
-enum TreeDumbError tree_dumb_set_out_dot_file(const char* const filename)
+enum TreeDumbError tree_dumb_set_out_file_(char*  const filename, FILE** const file, 
+                                           char** const old_filename, const char* const mode,
+                                           const char*  const file_extension)
 {
-    DUMBER_is_init_lasserts_();
-    lassert(filename, "");
-
-    return tree_dumb_set_out_file_(filename, &DUMBER_.dot_file, &DUMBER_.dot_name, "wb");
-}
-
-enum TreeDumbError tree_dumb_set_out_file_(const char*  const filename, FILE** const file, 
-                                  const char** const old_filename, const char* const mode)
-{
-    DUMBER_is_init_lasserts_();
     lassert(filename, "");
     lassert(file, "");
     lassert(old_filename, "");
+    lassert(file_extension, "");
 
-    *old_filename = filename;
+    TREE_DUMB_ERROR_HANDLE(tree_dumb_set_out_filename_(filename, file_extension, old_filename));
 
     if (*file && fclose(*file))
     {  
@@ -226,23 +226,28 @@ enum TreeDumbError tree_dumb_set_out_file_(const char*  const filename, FILE** c
 }
 
 
-enum TreeDumbError tree_dumb_set_out_svg_file(const char* const filename)
+enum TreeDumbError tree_dumb_set_out_filename_(char*  const filename, 
+                                               const char*  const file_extension,
+                                               char** const old_filename)
 {
-    DUMBER_is_init_lasserts_();
     lassert(filename, "");
+    lassert(file_extension, "");
 
-    DUMBER_.svg_name = filename;
-    return TREE_DUMB_ERROR_SUCCESS;
-}
+    free(*old_filename);
 
-enum TreeDumbError tree_dumb_set_out_graph_count_file(const char* const filename)
-{
-    DUMBER_is_init_lasserts_();
-    lassert(filename, "");
+    *old_filename = calloc(MAX_FILENAME_SIZE_, sizeof(char));
 
-    DUMBER_.graph_count_name = filename;
+    if (!*old_filename)
+    {
+        perror("Can't calloc old_filename");
+        return TREE_DUMB_ERROR_FAILURE;
+    }
 
-    TREE_DUMB_ERROR_HANDLE(set_graph_count_());
+    if (snprintf(*old_filename, MAX_FILENAME_SIZE_, "%s%s", filename, file_extension) <= 0)
+    {
+        perror("Can't snprintf old_filename");
+        return TREE_DUMB_ERROR_FAILURE;
+    }
 
     return TREE_DUMB_ERROR_SUCCESS;
 }
@@ -432,7 +437,7 @@ int create_tree_svg_(void)
 
     if (snprintf(create_svg_cmd, CREATE_SVG_CMD_SIZE, 
                  "dot -Tsvg %s -o %s%zu.svg >/dev/null", 
-                 DUMBER_.dot_name, DUMBER_.svg_name, DUMBER_.graph_count) <= 0)
+                 DUMBER_.dot_name, DUMBER_.out_name, DUMBER_.graph_count) <= 0)
     {
         fprintf(stderr, "Can't snprintf creare_svg_cmd\n");
         free(create_svg_cmd); create_svg_cmd = NULL;
@@ -459,7 +464,7 @@ int create_tree_svg_(void)
 
 int insert_tree_svg_(void)
 {
-    const char* filename_without_path = DUMBER_.svg_name;
+    const char* filename_without_path = DUMBER_.out_name;
     while (strchr(filename_without_path, '/') != NULL)
     {
         filename_without_path = strchr(filename_without_path, '/') + 1;
@@ -470,3 +475,5 @@ int insert_tree_svg_(void)
 
     return 0;
 }
+
+#undef MAX_FILENAME_SIZE_

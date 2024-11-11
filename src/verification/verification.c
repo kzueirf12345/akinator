@@ -20,6 +20,7 @@ const char* tree_strerror(const enum TreeError error)
         CASE_ENUM_TO_STRING_(TREE_ERROR_NODE_SIZE_IS_ZERO);
         CASE_ENUM_TO_STRING_(TREE_ERROR_SIZE_LESSER);
         CASE_ENUM_TO_STRING_(TREE_ERROR_UNKNOWN);
+        CASE_ENUM_TO_STRING_(TREE_ERROR_ELEM_TO_STR);
         default:
             return "UNKNOWN_TREE_ERROR";
     }

@@ -38,4 +38,7 @@ int data_to_str(const void* const data, const size_t size, char* const * str,
 #define TREE_INOUT_ELEM_CODE "%d"
 #define TREE_INOUT_ELEM_T int
 
+typedef int (*elem_to_str_t) (const void* const elem, const size_t   elem_size,
+                              char* const *     str,  const size_t mx_str_size);
+
 #endif /*ASINATOR_UTILS_UTILS_H*/
