@@ -10,7 +10,7 @@
 
 enum PtrState is_invalid_ptr(const void* ptr)
 {
-    lassert(!errno, "");
+    lassert(!errno, "errno: %s", strerror(errno));
 
     if (ptr == NULL)
     {

@@ -242,7 +242,7 @@ enum TreeDumbError tree_dumb_set_out_filename_(char*  const filename,
         return TREE_DUMB_ERROR_FAILURE;
     }
 
-    if (snprintf(*old_filename, FILENAME_MAX_SIZE, "%s%s", filename, file_extension) <= 0)
+    if (snprintf(*old_filename, FILENAME_MAX_SIZE , "%s%s", filename, file_extension) <= 0)
     {
         perror("Can't snprintf old_filename");
         return TREE_DUMB_ERROR_FAILURE;
