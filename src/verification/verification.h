@@ -3,9 +3,9 @@
 
 #include <assert.h>
 
-#include "../tree/tree_structs.h"
+#include "tree/tree_structs.h"
 #include "logger/liblogger.h"
-#include "../dumb/dumb.h"
+#include "dumb/dumb.h"
 
 enum TreeError
 {
@@ -13,7 +13,7 @@ enum TreeError
     TREE_ERROR_STANDARD_ERRNO       = 1,
     TREE_ERROR_TREE_IS_NULL         = 2,
     TREE_ERROR_TREE_IS_INVALID      = 3,
-    TREE_ERROR_COMPARE_IS_NULL      = 4,
+    // TREE_ERROR_COMPARE_IS_NULL      = 4,
     TREE_ERROR_COMPARE_IS_INVALID   = 5,
     TREE_ERROR_NODE_IS_NVALID       = 6,
     TREE_ERROR_SIZE_GREATER         = 7,

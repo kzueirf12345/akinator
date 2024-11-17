@@ -47,10 +47,12 @@ FLAGS += $(ADD_FLAGS)
 LIBS = -L./libs/logger -llogger
 
 
-DIRS = tree utils verification dumb
+DIRS = tree utils verification dumb flags game game/modes game/verification
 BUILD_DIRS = $(DIRS:%=$(BUILD_DIR)/%)
 
-SOURCES = main.c tree/tree.c utils/utils.c verification/verification.c dumb/dumb.c
+SOURCES = main.c tree/tree.c utils/utils.c verification/verification.c dumb/dumb.c flags/flags.c \
+		  game/game.c game/modes/test.c game/modes/print.c game/modes/create.c game/modes/game.c \
+		  game/verification/verification.c
 
 SOURCES_REL_PATH = $(SOURCES:%=$(SRC_DIR)/%)
 OBJECTS_REL_PATH = $(SOURCES:%.c=$(BUILD_DIR)/%.o)
@@ -72,7 +74,7 @@ $(PROJECT_NAME).out: $(OBJECTS_REL_PATH)
 	@$(COMPILER) $(FLAGS) -o $@ $^  $(LIBS)
 
 $(BUILD_DIR)/%.o : $(SRC_DIR)/%.c | ./$(BUILD_DIR)/ $(BUILD_DIRS) logger_build
-	@$(COMPILER) $(FLAGS) -I $(SRC_DIR)/utils -I./libs -c -MMD -MP $< -o $@
+	@$(COMPILER) $(FLAGS) -I./libs -I$(SRC_DIR) -c -MMD -MP $< -o $@
 
 -include $(DEPS_REL_PATH)
 

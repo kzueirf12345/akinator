@@ -9,9 +9,9 @@
 
 #include "tree.h"
 #include "logger/liblogger.h"
-#include "utils.h"
+#include "utils/utils.h"
 #include "tree_structs.h"
-#include "../verification/verification.h"
+#include "verification/verification.h"
 
 
 tree_node_t* tree_node_ctor(const void* const data, const size_t size)
@@ -65,7 +65,7 @@ void tree_node_dtor(tree_node_t* const tree_node)
 enum TreeError tree_ctor(tree_t* const tree, const tree_compare_t compare)
 {
     lassert(!is_invalid_ptr(tree), "");
-    lassert(!is_invalid_ptr(compare), "");
+    // lassert(!is_invalid_ptr(compare), "");
 
     tree->Groot = NULL;
     tree->compare = compare;
@@ -83,7 +83,7 @@ void tree_dtor(tree_t* const tree)
 
     tree_dtor_recursive_(tree->Groot); IF_DEBUG(tree->Groot = NULL;)
     IF_DEBUG(tree->size    = 0;)
-    IF_DEBUG(tree->compare = 0;)
+    IF_DEBUG(tree->compare = NULL;)
 }
 
 void tree_dtor_recursive_(tree_node_t* const tree_node)
@@ -142,7 +142,7 @@ enum TreeError fill_tree_from_file(tree_t* const tree, const char* const input_f
     STRCHR_NEW_STR_VERIFY_(cur_str);
 
     char data[MAX_DATA_SIZE_] = {};
-    if (sscanf(cur_str, "%*[ \t]data = '%[^']'", data) == 0)
+    if (sscanf(cur_str, "%*[ \t]'%[^']'", data) == 0)
     {
         fprintf(stderr, "Can't sscanf\n");
         return TREE_ERROR_STANDARD_ERRNO;
@@ -159,12 +159,12 @@ enum TreeError fill_tree_from_file(tree_t* const tree, const char* const input_f
 
     char direction[DIRECTION_SIZE_] = {};
 
-    STRCHR_NEW_STR_VERIFY_(cur_str);
+    STRCHR_NEW_STR_VERIFY_(cur_str,                                   tree_node_dtor(tree->Groot););
 
     sscanf(cur_str, "%*[ \t]%s", direction);
     TREE_ERROR_HANDLE(fill_tree_from_file_recursive_(tree, tree->Groot, &cur_str, true));
 
-    STRCHR_NEW_STR_VERIFY_(cur_str);
+    STRCHR_NEW_STR_VERIFY_(cur_str,                                   tree_node_dtor(tree->Groot););
 
     sscanf(str, "%*[ \t]%s", direction);
     TREE_ERROR_HANDLE(fill_tree_from_file_recursive_(tree, tree->Groot, &cur_str, false));
@@ -252,7 +252,7 @@ static enum TreeError fill_tree_from_file_recursive_(tree_t* const tree, tree_no
     STRCHR_NEW_STR_VERIFY_(*cur_str);
 
     char data[MAX_DATA_SIZE_] = {};
-    if (sscanf(*cur_str, "%*[ \t]data = '%[^']'", data) == 0)
+    if (sscanf(*cur_str, "%*[ \t]'%[^']'", data) == 0)
     {
         fprintf(stderr, "Can't sscanf\n");
         return TREE_ERROR_STANDARD_ERRNO;
@@ -272,7 +272,7 @@ static enum TreeError fill_tree_from_file_recursive_(tree_t* const tree, tree_no
 
     char direction[DIRECTION_SIZE_] = {};
 
-    STRCHR_NEW_STR_VERIFY_(*cur_str);
+    STRCHR_NEW_STR_VERIFY_(*cur_str,                                         tree_node_dtor(node););
 
     sscanf(*cur_str, "%*[ \t]%s", direction);
     TREE_ERROR_HANDLE(
@@ -280,7 +280,7 @@ static enum TreeError fill_tree_from_file_recursive_(tree_t* const tree, tree_no
                                                                                tree_node_dtor(node);
     );
 
-    STRCHR_NEW_STR_VERIFY_(*cur_str);
+    STRCHR_NEW_STR_VERIFY_(*cur_str,                                         tree_node_dtor(node););
 
     sscanf(*cur_str, "%*[ \t]%s", direction);
     TREE_ERROR_HANDLE(
@@ -288,7 +288,7 @@ static enum TreeError fill_tree_from_file_recursive_(tree_t* const tree, tree_no
                                                                                tree_node_dtor(node);
     );
 
-    STRCHR_NEW_STR_VERIFY_(*cur_str);
+    STRCHR_NEW_STR_VERIFY_(*cur_str,                                         tree_node_dtor(node););
 
     sscanf(*cur_str, "%*[ \t]}");
 
@@ -314,6 +314,8 @@ enum TreeError tree_insert(tree_t* const tree, tree_node_t* const tree_node)
         tree->Groot = tree_node;
         return TREE_ERROR_SUCCESS;
     }
+    
+    lassert(!is_invalid_ptr(tree->compare), "");
 
     TREE_ERROR_HANDLE(tree_insert_recursive_(&tree->Groot, tree_node, tree->compare));
 
@@ -327,6 +329,7 @@ enum TreeError tree_insert_recursive_(tree_node_t** const tree, tree_node_t* con
     lassert(!is_invalid_ptr(tree), "");
     lassert(!is_invalid_ptr(tree_node), "");
     lassert(!is_invalid_ptr(tree_node->data), "");
+    lassert(!is_invalid_ptr(compare), "");
 
     if (!*tree)
     {

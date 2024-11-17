@@ -4,8 +4,8 @@
 #include <stdio.h>
 
 #include "tree_structs.h"
-#include "../verification/verification.h"
-#include "utils.h"
+#include "verification/verification.h"
+#include "utils/utils.h"
 
 
 tree_node_t* tree_node_ctor(const void* const data, const size_t size);

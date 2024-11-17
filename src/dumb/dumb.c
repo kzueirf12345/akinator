@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "dumb.h"
-#include "utils.h"
+#include "utils/utils.h"
 #include "logger/liblogger.h"
 
 static const char* const HTML_INTRO_ =
@@ -390,7 +390,7 @@ int create_tree_dot_recursive_(const tree_node_t* const node, const size_t tree_
     if (data_str && !elem_to_str(node->data, node->size, &data_str, data_str_size)) 
     {
         fprintf(DUMBER_.dot_file, 
-                "node%zu [shape=Mrecord; label = \" %zu | data = %s\"];\n",
+                "node%zu [shape=Mrecord; label = \" %zu | %s\"];\n",
                 node_count_, node_count_, data_str);
     }
 
@@ -400,7 +400,7 @@ int create_tree_dot_recursive_(const tree_node_t* const node, const size_t tree_
 
     if (node->lt)
     {
-        fprintf(DUMBER_.dot_file, "node%zu -> node%zu [color=green]\n", 
+        fprintf(DUMBER_.dot_file, "node%zu -> node%zu [color=red]\n", 
                 parent_num, node_count_ + 1);
         if (create_tree_dot_recursive_(node->lt, tree_size, elem_to_str))
             return -1;
@@ -408,7 +408,7 @@ int create_tree_dot_recursive_(const tree_node_t* const node, const size_t tree_
 
     if (node->rt)
     {
-        fprintf(DUMBER_.dot_file, "node%zu -> node%zu [color=red]\n", 
+        fprintf(DUMBER_.dot_file, "node%zu -> node%zu [color=green]\n", 
                 parent_num, node_count_ + 1);
         if (create_tree_dot_recursive_(node->rt, tree_size, elem_to_str))
             return -1;

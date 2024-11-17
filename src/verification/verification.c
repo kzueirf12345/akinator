@@ -1,6 +1,6 @@
 
 #include "verification.h"
-#include "utils.h"
+#include "utils/utils.h"
 
 #define CASE_ENUM_TO_STRING_(error) case error: return #error
 const char* tree_strerror(const enum TreeError error)
@@ -11,7 +11,7 @@ const char* tree_strerror(const enum TreeError error)
         CASE_ENUM_TO_STRING_(TREE_ERROR_STANDARD_ERRNO);
         CASE_ENUM_TO_STRING_(TREE_ERROR_TREE_IS_NULL);
         CASE_ENUM_TO_STRING_(TREE_ERROR_TREE_IS_INVALID);
-        CASE_ENUM_TO_STRING_(TREE_ERROR_COMPARE_IS_NULL);
+        // CASE_ENUM_TO_STRING_(TREE_ERROR_COMPARE_IS_NULL);
         CASE_ENUM_TO_STRING_(TREE_ERROR_COMPARE_IS_INVALID);
         CASE_ENUM_TO_STRING_(TREE_ERROR_NODE_IS_NVALID);
         CASE_ENUM_TO_STRING_(TREE_ERROR_SIZE_GREATER);
@@ -51,7 +51,7 @@ enum TreeError tree_verify_NOT_USE(const tree_t* const tree)
     switch (is_invalid_ptr(tree->compare))
     {
         case PTR_STATES_VALID:       break;
-        case PTR_STATES_NULL:        return TREE_ERROR_COMPARE_IS_NULL;
+        case PTR_STATES_NULL:        break;
         case PTR_STATES_INVALID:     return TREE_ERROR_COMPARE_IS_INVALID;
         case PTR_STATES_ERROR:       return TREE_ERROR_STANDARD_ERRNO;
         

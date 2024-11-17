@@ -4,9 +4,30 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "utils.h"
 #include "logger/liblogger.h"
+
+char* to_lower(char* const str) 
+{
+    lassert(!is_invalid_ptr(str), "");
+
+    for (size_t ind = 0; str[ind] != '\0'; ++ind) 
+        str[ind] = (char)tolower(str[ind]);
+
+    return str;
+}
+
+char* to_upper(char* const str) 
+{
+    lassert(!is_invalid_ptr(str), "");
+
+    for (size_t ind = 0; str[ind] != '\0'; ++ind) 
+        str[ind] = (char)toupper(str[ind]);
+
+    return str;
+}
 
 enum PtrState is_invalid_ptr(const void* ptr)
 {
