@@ -36,15 +36,14 @@ enum GameError mode_game_recursive_(tree_node_t** node, bool* const do_add_size)
     return GAME_ERROR_SUCCESS;
 }
 
-#define NODE_DATA_SIZE_ 256
 #define ANSWER_SIZE_ 10
 enum GameError question_handle_(tree_node_t** node, bool* const do_add_size)
 {
     lassert(!is_invalid_ptr(*node), "");
     lassert((bool)(*node)->lt == (bool)(*node)->rt, "");
 
-    char* node_data_str = calloc(NODE_DATA_SIZE_, sizeof(char));
-    if (data_to_str((*node)->data, (*node)->size, &node_data_str, NODE_DATA_SIZE_))
+    char* node_data_str = calloc(NODE_DATA_MAX_SIZE, sizeof(char));
+    if (data_to_str((*node)->data, (*node)->size, &node_data_str, NODE_DATA_MAX_SIZE))
     {
         fprintf(stderr, "Can't data_to_str");
         return GAME_ERROR_TREE;
@@ -81,8 +80,8 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
     lassert(!is_invalid_ptr(*node), "");
     lassert((bool)(*node)->lt == (bool)(*node)->rt, "");
 
-    char* node_data_str = calloc(NODE_DATA_SIZE_, sizeof(char));
-    if (data_to_str((*node)->data, (*node)->size, &node_data_str, NODE_DATA_SIZE_))
+    char* node_data_str = calloc(NODE_DATA_MAX_SIZE, sizeof(char));
+    if (data_to_str((*node)->data, (*node)->size, &node_data_str, NODE_DATA_MAX_SIZE))
     {
         fprintf(stderr, "Can't data_to_str");
         return GAME_ERROR_TREE;
@@ -123,7 +122,7 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
     {
         printf("Пиздец, ну и что ты нагадал?\n");
 
-        char answer_node_data[NODE_DATA_SIZE_] = {};
+        char answer_node_data[NODE_DATA_MAX_SIZE] = {};
         if (scanf("\n%[^\n]", answer_node_data) != 1)
         {
             perror("Can't scanf answer_node_data");
@@ -132,21 +131,21 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
 
         printf("И чем же отличается '%s' от '%s'?\n", answer_node_data, node_data_str);
 
-        char question_node_data[NODE_DATA_SIZE_] = {};
+        char question_node_data[NODE_DATA_MAX_SIZE] = {};
         if (scanf("\n%[^\n]", question_node_data) != 1)
         {
             perror("Can't scanf answer_node_data");
             return GAME_ERROR_STANDARD_ERRNO;
         }
 
-        tree_node_t* answer_node = tree_node_ctor(answer_node_data, NODE_DATA_SIZE_);
+        tree_node_t* answer_node = tree_node_ctor(answer_node_data, NODE_DATA_MAX_SIZE);
         if (!answer_node)
         {
             fprintf(stderr, "Can't ctor answer_node\n");
             return GAME_ERROR_TREE;
         }
 
-        tree_node_t* question_node = tree_node_ctor(question_node_data, NODE_DATA_SIZE_);
+        tree_node_t* question_node = tree_node_ctor(question_node_data, NODE_DATA_MAX_SIZE);
         if (!question_node)
         {
             fprintf(stderr, "Can't ctor question_node\n");

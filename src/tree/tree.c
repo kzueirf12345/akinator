@@ -349,6 +349,37 @@ enum TreeError tree_insert_recursive_(tree_node_t** const tree, tree_node_t* con
     return TREE_ERROR_SUCCESS;
 }
 
+tree_node_t* tree_find_node_recursive_(const tree_node_t* const node, const void* const data, 
+                                       const size_t size);
+
+tree_node_t* tree_find_node(const tree_t* const tree, const void* const data, const size_t size)
+{
+    TREE_VERIFY(tree, NULL);
+    lassert(!is_invalid_ptr(data), "");
+    lassert(size, "");
+
+    return tree_find_node_recursive_(tree->Groot, data, size);
+}
+
+tree_node_t* tree_find_node_recursive_(const tree_node_t* const node, const void* const data, 
+                                       const size_t size)
+{
+    if (node == NULL) return NULL;
+    
+    lassert(!is_invalid_ptr(node), "");
+    lassert(!is_invalid_ptr(data), "");
+    lassert(size, "");
+
+    if (memcmp(node->data, data, MIN(node->size, size)) == 0)
+        return node;
+    
+    tree_node_t* lt_find_res = tree_find_node_recursive_(node->lt, data, size);
+    if (lt_find_res)
+        return lt_find_res;
+    
+    return tree_find_node_recursive_(node->rt, data, size);
+}
+
 enum TreeError tree_print_inorder_recursive_(FILE* out, const tree_node_t* const node, 
                                             elem_to_str_t elem_to_str);
 

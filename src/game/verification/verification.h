@@ -39,4 +39,6 @@ const char* game_strerror(const enum GameError error);
         }                                                                                           \
     } while(0)
 
+#define NODE_DATA_MAX_SIZE 256
+
 #endif /* AKINATOR_SRC_GAME_VERIFICATION_VERIFICATION_H */

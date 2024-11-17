@@ -58,6 +58,8 @@ enum GameError do_akinator(flags_objs_t* const flags_objs)
             }
             case MODE_DEFINITION:
             {
+                GAME_ERROR_HANDLE(mode_definition(flags_objs, &tree),
+                                                                                 tree_dtor(&tree););
                 break;
             }
             case MODE_COMPARE:
