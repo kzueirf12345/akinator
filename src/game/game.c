@@ -9,6 +9,7 @@
 #include "modes/print.h"
 #include "modes/create.h"
 #include "modes/game.h"
+#include "modes/definition.h"
 
 enum Mode
 {

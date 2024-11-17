@@ -349,7 +349,7 @@ enum TreeError tree_insert_recursive_(tree_node_t** const tree, tree_node_t* con
     return TREE_ERROR_SUCCESS;
 }
 
-tree_node_t* tree_find_node_recursive_(const tree_node_t* const node, const void* const data, 
+tree_node_t* tree_find_node_recursive_(tree_node_t* const node, const void* const data, 
                                        const size_t size);
 
 tree_node_t* tree_find_node(const tree_t* const tree, const void* const data, const size_t size)
@@ -361,11 +361,11 @@ tree_node_t* tree_find_node(const tree_t* const tree, const void* const data, co
     return tree_find_node_recursive_(tree->Groot, data, size);
 }
 
-tree_node_t* tree_find_node_recursive_(const tree_node_t* const node, const void* const data, 
+tree_node_t* tree_find_node_recursive_(tree_node_t* const node, const void* const data, 
                                        const size_t size)
 {
     if (node == NULL) return NULL;
-    
+
     lassert(!is_invalid_ptr(node), "");
     lassert(!is_invalid_ptr(data), "");
     lassert(size, "");
@@ -500,7 +500,7 @@ enum TreeError tree_print_preorder_recursive_(FILE* out, const tree_node_t* cons
     }
 
     tabulate_deep_(out, deep + 1);
-    if (fprintf(out, "data = '%s'\n", data_str) <= 0)
+    if (fprintf(out, "'%s'\n", data_str) <= 0)
     {
         perror("Can't fputs data_str");
         return TREE_ERROR_STANDARD_ERRNO;

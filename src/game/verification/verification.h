@@ -8,7 +8,8 @@ enum GameError
     GAME_ERROR_SUCCESS          = 0,
     GAME_ERROR_STANDARD_ERRNO   = 1,
     GAME_ERROR_TREE             = 2,
-    GAME_ERROR_TI_PIDOR         = 3,
+    GAME_ERROR_STACK            = 3,
+    GAME_ERROR_TI_PIDOR         = 4,
 };
 static_assert(GAME_ERROR_SUCCESS  == 0);
 
@@ -39,6 +40,19 @@ const char* game_strerror(const enum GameError error);
         }                                                                                           \
     } while(0)
 
-#define NODE_DATA_MAX_SIZE 256
+#define STACK_ERROR_HANDLE_(call_func, ...)                                                         \
+    do {                                                                                            \
+        enum StackError error_handler = call_func;                                                  \
+        if (error_handler)                                                                          \
+        {                                                                                           \
+            fprintf(stderr, "Can't " #call_func". Error: %s\n",                                     \
+                            stack_strerror(error_handler));                                         \
+            __VA_ARGS__                                                                             \
+            return GAME_ERROR_STACK;                                                                \
+        }                                                                                           \
+    } while(0)
+
+
+#define NODE_DATA_MAX_SIZE 255
 
 #endif /* AKINATOR_SRC_GAME_VERIFICATION_VERIFICATION_H */
