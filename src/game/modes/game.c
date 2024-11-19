@@ -6,6 +6,8 @@
 #include "game/verification/verification.h"
 #include "tree/tree.h"
 
+//TODO переписать на нерекурсивный алгоритм, потому что надежнее и быстрее
+
 enum GameError mode_game_recursive_(tree_node_t** node, bool* const do_add_size);
 enum GameError answer_handle_      (tree_node_t** node, bool* const do_add_size);
 enum GameError question_handle_    (tree_node_t** node, bool* const do_add_size);

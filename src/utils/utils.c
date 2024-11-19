@@ -31,7 +31,7 @@ char* to_upper(char* const str)
 
 enum PtrState is_invalid_ptr(const void* ptr)
 {
-    lassert(!errno, "errno: %s", strerror(errno));
+    // lassert(!errno, "errno: %s", strerror(errno));
 
     if (ptr == NULL)
     {

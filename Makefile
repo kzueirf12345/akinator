@@ -103,7 +103,7 @@ stack_clean:
 
 
 
-clean_all: clean_obj clean_deps clean_out logger_clean
+clean_all: clean_obj clean_deps clean_out logger_clean stack_clean
 
 clean: clean_obj clean_deps clean_out
 

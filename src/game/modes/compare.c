@@ -26,10 +26,10 @@ enum GameError mode_compare(const tree_t* const tree)
     }
 
     stack_key_t stack1 = 0;
-    STACK_ERROR_HANDLE_(STACK_CTOR(&stack1, NODE_DATA_MAX_SIZE, 0));
+    STACK_ERROR_HANDLE_(STACK_CTOR(&stack1, sizeof(bool), 0));
 
     stack_key_t stack2 = 0;
-    STACK_ERROR_HANDLE_(STACK_CTOR(&stack2, NODE_DATA_MAX_SIZE, 0),
+    STACK_ERROR_HANDLE_(STACK_CTOR(&stack2, sizeof(bool), 0),
                                                                               stack_dtor(&stack1););
 
     if (!fill_def_stack(tree->Groot, node_data1, stack1))
@@ -46,16 +46,22 @@ enum GameError mode_compare(const tree_t* const tree)
         return GAME_ERROR_SUCCESS;
     }
 
+    tree_node_t* cur_node1 = tree->Groot;
+    tree_node_t* cur_node2 = tree->Groot;
+
     printf("И '%s', и '%s' имеют свойства:\n", node_data1, node_data2);
     
     while (!stack_is_empty(stack1) && !stack_is_empty(stack2))
     {
-        STACK_ERROR_HANDLE_(stack_pop(&stack1, node_data1),
+        bool stack_back_elem1 = false;
+        bool stack_back_elem2 = false;
+
+        GAME_ERROR_HANDLE(thesis_handle(stack1, &cur_node1, node_data1, &stack_back_elem1),
                                                           stack_dtor(&stack1);stack_dtor(&stack2););
-        STACK_ERROR_HANDLE_(stack_pop(&stack2, node_data2),
+        GAME_ERROR_HANDLE(thesis_handle(stack2, &cur_node2, node_data2, &stack_back_elem2),
                                                           stack_dtor(&stack1);stack_dtor(&stack2););
 
-        if (strcmp(node_data1, node_data2) != 0)
+        if (stack_back_elem1 != stack_back_elem2)
             break;
         
         puts(node_data1);
@@ -65,11 +71,11 @@ enum GameError mode_compare(const tree_t* const tree)
             node_data1, node_data2);
     
 
-    printf("\nПри это у первой хуйни отличительные черты:\n");
+    printf("\nПри этом у первой хуйни отличительные черты:\n");
 
     while (!stack_is_empty(stack1))
     {
-        STACK_ERROR_HANDLE_(stack_pop(&stack1, node_data1),
+        GAME_ERROR_HANDLE(thesis_handle(stack1, &cur_node1, node_data1, NULL),
                                                           stack_dtor(&stack1);stack_dtor(&stack2););
         puts(node_data1);
     }
@@ -78,7 +84,7 @@ enum GameError mode_compare(const tree_t* const tree)
 
     while (!stack_is_empty(stack2))
     {
-        STACK_ERROR_HANDLE_(stack_pop(&stack2, node_data2),
+        GAME_ERROR_HANDLE(thesis_handle(stack2, &cur_node2, node_data2, NULL),
                                                           stack_dtor(&stack1);stack_dtor(&stack2););
         puts(node_data2);
     }
