@@ -190,7 +190,7 @@ static enum TreeError init_str_from_file_(const char* const input_filename,
 
     TREE_ERROR_HANDLE(init_str_size_from_file_(str_size, fd));
 
-    *str = mmap(NULL, *str_size, PROT_WRITE | PROT_READ, MAP_PRIVATE, fd, 0);
+    *str = mmap(NULL, *str_size, PROT_READ, MAP_PRIVATE, fd, 0);
 
     if (*str  == MAP_FAILED)
     {
@@ -205,7 +205,11 @@ static enum TreeError init_str_from_file_(const char* const input_filename,
     }
     IF_DEBUG(fd = -1;)
 
-    (*str)[*str_size - 1] = '\0';
+    // fprintf(stderr, "\n'%s'\n", *str);
+
+    // fprintf(stderr, "val last char: %d\n", (*str)[*str_size - 1]);
+
+    // (*str)[*str_size - 1] = '\n';
 
     return TREE_ERROR_SUCCESS;
 }

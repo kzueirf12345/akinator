@@ -1,6 +1,8 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
+#include <stdbool.h>
 
 #include "print.h"
 #include "game/verification/verification.h"
@@ -20,11 +22,52 @@ enum OutputMode
 static_assert(OUTPUT_MODE_AGAIN == 0);
 static_assert(sizeof(enum OutputMode) == sizeof(uint32_t));
 
+
+#define CONCHOLE_OUT_KEYWORD_ "CONCOLE"
 enum GameError mode_print(flags_objs_t* const flags_objs, const tree_t* const tree)
 {
     lassert(!is_invalid_ptr(flags_objs), "");
     TREE_VERIFY(tree, NULL);
     lassert(tree->size, "");
+
+    printf("А тебе случаем не надо поменять вывод?"
+           "(Если да, то отправь какое-нибудь правдивое целое число)\n");
+
+    int do_switch_out = 0;
+
+    if (scanf("%d", &do_switch_out) != 1)
+    {
+        perror("Can't scanf do_switch_out");
+        return GAME_ERROR_STANDARD_ERRNO;
+    }
+
+    if (!flags_objs->out_file || do_switch_out)
+    {
+        printf("Эм, а выводить куда? Если хочешь в консоль (дохуя хочешь) пиши '" 
+               CONCHOLE_OUT_KEYWORD_ "'\n");
+        
+        if (scanf("%s", flags_objs->out_filename) != 1)
+        {
+            perror("Can't scanf out_filename");
+            return GAME_ERROR_STANDARD_ERRNO;
+        }
+
+        if (flags_objs->out_file && fclose(flags_objs->out_file))
+        {
+            perror("Can't fclose out_file");
+            return GAME_ERROR_STANDARD_ERRNO;
+        }
+
+        if (strcmp(flags_objs->out_filename, CONCHOLE_OUT_KEYWORD_) == 0)
+        {
+            flags_objs->out_file = stdout;
+        }
+        else if (!(flags_objs->out_file = fopen(flags_objs->out_filename, "wb")))
+        {
+            perror("Can't fopen out_file");
+            return GAME_ERROR_STANDARD_ERRNO;
+        }
+    }
 
     enum OutputMode output_mode = OUTPUT_MODE_AGAIN;
 
@@ -78,3 +121,4 @@ enum GameError mode_print(flags_objs_t* const flags_objs, const tree_t* const tr
     
     return GAME_ERROR_SUCCESS;
 }
+#undef CONCHOLE_OUT_KEYWORD_

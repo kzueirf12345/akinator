@@ -11,6 +11,34 @@ enum GameError mode_create(flags_objs_t* const flags_objs, tree_t* const tree)
 {
     lassert(!is_invalid_ptr(flags_objs), "");
     TREE_VERIFY(tree, NULL);
+
+    printf("А тебе случаем не надо поменять ввод?"
+           "(Если да, то отправь какое-нибудь правдивое целое число)\n");
+
+    int do_switch_in = 0;
+
+    if (scanf("%d", &do_switch_in) != 1)
+    {
+        perror("Can't scanf do_switch_in");
+        return GAME_ERROR_STANDARD_ERRNO;
+    }
+
+    if (!*flags_objs->in_filename || do_switch_in)
+    {
+        printf("Эм, а данные брать откуда?\n");
+        
+        if (scanf("%s", flags_objs->in_filename) != 1)
+        {
+            perror("Can't scanf in_filename");
+            return GAME_ERROR_STANDARD_ERRNO;
+        }
+
+        if (flags_objs->in_file && fclose(flags_objs->in_file))
+        {
+            perror("Can't fclose in_file");
+            return GAME_ERROR_STANDARD_ERRNO;
+        }
+    }
     
     printf(
         "Перед заполнением нового никому ненужного дерева "
