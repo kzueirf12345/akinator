@@ -6,10 +6,7 @@
 #include "tree_structs.h"
 #include "verification/verification.h"
 #include "utils/utils.h"
-
-
-tree_node_t* tree_node_ctor(const void* const data, const size_t size);
-void         tree_node_dtor(tree_node_t* const tree_node);
+#include "node/node.h"
 
 
 enum TreeError tree_ctor          (tree_t* const tree, const tree_compare_t compare);

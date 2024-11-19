@@ -22,7 +22,7 @@ const char* flags_strerror(const enum FlagsError error)
 
 enum FlagsError flags_objs_ctor(flags_objs_t* const flags_objs)
 {
-    lassert(flags_objs, "");
+    lassert(!is_invalid_ptr(flags_objs), "");
 
     if (!strncpy(flags_objs->log_folder, "./log/", FILENAME_MAX_SIZE))
     {
@@ -38,7 +38,7 @@ enum FlagsError flags_objs_ctor(flags_objs_t* const flags_objs)
 
 enum FlagsError flags_objs_dtor (flags_objs_t* const flags_objs)
 {
-    lassert(flags_objs, "");
+    lassert(!is_invalid_ptr(flags_objs), "");
 
     if (flags_objs->in_file && fclose(flags_objs->in_file))
     {
@@ -60,9 +60,9 @@ enum FlagsError flags_objs_dtor (flags_objs_t* const flags_objs)
 enum FlagsError flags_processing(flags_objs_t* const flags_objs, 
                                  const int argc, char* const argv[])
 {
-    lassert(flags_objs, "");
+    lassert(!is_invalid_ptr(flags_objs), "");
+    lassert(!is_invalid_ptr(argv), "");
     lassert(argc, "");
-    lassert(argv, "");
 
     int getopt_rez = 0;
     while ((getopt_rez = getopt(argc, argv, "l:o:i:")) != -1)
@@ -87,12 +87,6 @@ enum FlagsError flags_processing(flags_objs_t* const flags_objs,
                     return FLAGS_ERROR_FAILURE;
                 }
 
-                if (!(flags_objs->out_file = fopen(flags_objs->out_filename, "wb")))
-                {
-                    perror("Can't fopen flags_objs->out_file");
-                    return FLAGS_ERROR_FAILURE;
-                }
-
                 break;
             }
             case 'i':
@@ -100,12 +94,6 @@ enum FlagsError flags_processing(flags_objs_t* const flags_objs,
                 if (!strncpy(flags_objs->in_filename, optarg, FILENAME_MAX_SIZE))
                 {
                     perror("Can't strncpy flags_objs->in_filename");
-                    return FLAGS_ERROR_FAILURE;
-                }
-
-                if (!(flags_objs->in_file = fopen(flags_objs->in_filename, "rb")))
-                {
-                    perror("Can't fopen flags_objs->in_file");
                     return FLAGS_ERROR_FAILURE;
                 }
 
