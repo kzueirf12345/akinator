@@ -81,6 +81,13 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
     lassert((bool)(*node)->lt == (bool)(*node)->rt, "");
 
     char* node_data_str = calloc(NODE_DATA_MAX_SIZE, sizeof(char));
+
+    if (!node_data_str)
+    {
+        perror("Can't calloc node_data_str");
+        return GAME_ERROR_SUCCESS;
+    }
+
     if (data_to_str((*node)->data, (*node)->size, &node_data_str, NODE_DATA_MAX_SIZE))
     {
         fprintf(stderr, "Can't data_to_str");
@@ -92,6 +99,7 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
     if (sleep(2) != 0)
     {
         perror("I can't sleep...");
+                                                free(node_data_str); IF_DEBUG(node_data_str = NULL;)
         return GAME_ERROR_STANDARD_ERRNO;
     }
     fprintf(stdout, "Сосал?\n");
@@ -100,6 +108,7 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
     if (scanf("%s", answer) != 1)
     {
         perror("Can't scanf answer");
+                                                free(node_data_str); IF_DEBUG(node_data_str = NULL;)
         return GAME_ERROR_STANDARD_ERRNO;
     }
 
@@ -110,12 +119,14 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
     if (is_correct == -1)
     {
         printf("Не умеешь писать - сосёшь бибу\n");
+                                                free(node_data_str); IF_DEBUG(node_data_str = NULL;)
         return GAME_ERROR_SUCCESS;
     }
 
     if (is_correct)
     {
         printf("Очев + банально + очев. Я знал, ХАХ! Ты лох\n");
+                                                free(node_data_str); IF_DEBUG(node_data_str = NULL;)
         return GAME_ERROR_SUCCESS;
     }
     else
@@ -126,6 +137,7 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
         if (scanf("\n%[^\n]", answer_node_data) != 1)
         {
             perror("Can't scanf answer_node_data");
+                                                free(node_data_str); IF_DEBUG(node_data_str = NULL;)
             return GAME_ERROR_STANDARD_ERRNO;
         }
 
@@ -135,6 +147,7 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
         if (scanf("\n%[^\n]", question_node_data) != 1)
         {
             perror("Can't scanf answer_node_data");
+                                                free(node_data_str); IF_DEBUG(node_data_str = NULL;)
             return GAME_ERROR_STANDARD_ERRNO;
         }
 
@@ -142,6 +155,7 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
         if (!answer_node)
         {
             fprintf(stderr, "Can't ctor answer_node\n");
+                                                free(node_data_str); IF_DEBUG(node_data_str = NULL;)
             return GAME_ERROR_TREE;
         }
 
@@ -149,6 +163,7 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
         if (!question_node)
         {
             fprintf(stderr, "Can't ctor question_node\n");
+                                                free(node_data_str); IF_DEBUG(node_data_str = NULL;)
             return GAME_ERROR_TREE;
         }
 
@@ -159,7 +174,7 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
         *do_add_size = true;
     }
 
-    free(node_data_str); IF_DEBUG(node_data_str = NULL;)
+                                                free(node_data_str); IF_DEBUG(node_data_str = NULL;)
 
     return GAME_ERROR_SUCCESS;
 }

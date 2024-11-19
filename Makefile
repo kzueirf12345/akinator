@@ -52,7 +52,7 @@ BUILD_DIRS = $(DIRS:%=$(BUILD_DIR)/%)
 
 SOURCES = main.c tree/tree.c utils/utils.c verification/verification.c dumb/dumb.c flags/flags.c \
 		  game/game.c game/modes/test.c game/modes/print.c game/modes/create.c game/modes/game.c \
-		  game/modes/definition.c game/verification/verification.c
+		  game/modes/definition.c game/verification/verification.c game/modes/compare.c
 
 SOURCES_REL_PATH = $(SOURCES:%=$(SRC_DIR)/%)
 OBJECTS_REL_PATH = $(SOURCES:%.c=$(BUILD_DIR)/%.o)

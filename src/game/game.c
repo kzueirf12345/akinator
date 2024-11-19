@@ -10,6 +10,7 @@
 #include "modes/create.h"
 #include "modes/game.h"
 #include "modes/definition.h"
+#include "modes/compare.h"
 
 enum Mode
 {
@@ -59,12 +60,14 @@ enum GameError do_akinator(flags_objs_t* const flags_objs)
             }
             case MODE_DEFINITION:
             {
-                GAME_ERROR_HANDLE(mode_definition(flags_objs, &tree),
+                GAME_ERROR_HANDLE(mode_definition(&tree),
                                                                                  tree_dtor(&tree););
                 break;
             }
             case MODE_COMPARE:
             {
+                GAME_ERROR_HANDLE(mode_compare(&tree),
+                                                                                 tree_dtor(&tree););
                 break;
             }
             case MODE_CREATE:
