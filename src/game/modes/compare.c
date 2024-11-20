@@ -9,7 +9,7 @@ enum GameError mode_compare(const tree_t* const tree)
 {
     TREE_VERIFY(tree, NULL);
 
-    printf("Сравнительно похуй, но давай, вводи две хуйни\n");
+    VOICINGF("Сравнительно похуй, но давай, вводи две хуйни\n");
 
     char node_data1[NODE_DATA_MAX_SIZE] = {};
     if (scanf("\n%[^\n]", node_data1) != 1)
@@ -34,14 +34,14 @@ enum GameError mode_compare(const tree_t* const tree)
 
     if (!fill_def_stack(tree->Groot, node_data1, stack1))
     {
-        printf("Нихуя нету такого, съебал\n");
+        VOICINGF("Нихуя нету такого, съебал\n");
                                                             stack_dtor(&stack1);stack_dtor(&stack2);
         return GAME_ERROR_SUCCESS;
     }
 
     if (!fill_def_stack(tree->Groot, node_data2, stack2))
     {
-        printf("Нихуя нету такого, съебал\n");
+        VOICINGF("Нихуя нету такого, съебал\n");
                                                             stack_dtor(&stack1);stack_dtor(&stack2);
         return GAME_ERROR_SUCCESS;
     }
@@ -49,7 +49,7 @@ enum GameError mode_compare(const tree_t* const tree)
     tree_node_t* cur_node1 = tree->Groot;
     tree_node_t* cur_node2 = tree->Groot;
 
-    printf("И '%s', и '%s' имеют свойства:\n", node_data1, node_data2);
+    VOICINGF("И '%s', и '%s' имеют свойства:\n", node_data1, node_data2);
     
     while (!stack_is_empty(stack1) && !stack_is_empty(stack2))
     {
@@ -64,29 +64,29 @@ enum GameError mode_compare(const tree_t* const tree)
         if (stack_back_elem1 != stack_back_elem2)
             break;
         
-        puts(node_data1);
+        VOICINGF(node_data1);
     }
 
-    printf("\nКлючевое различие состоит в том, что первая хуйня - %s. А вот вторая - %s\n",
+    VOICINGF("\nКлючевое различие состоит в том, что первая хуйня - %s. А вот вторая - %s\n",
             node_data1, node_data2);
     
 
-    printf("\nПри этом у первой хуйни отличительные черты:\n");
+    VOICINGF("\nПри этом у первой хуйни отличительные черты:\n");
 
     while (!stack_is_empty(stack1))
     {
         GAME_ERROR_HANDLE(thesis_handle(stack1, &cur_node1, node_data1, NULL),
                                                           stack_dtor(&stack1);stack_dtor(&stack2););
-        puts(node_data1);
+        VOICINGF("%s\n", node_data1);
     }
 
-    printf("\nА у второй хуйни отличительные черты:\n");
+    VOICINGF("\nА у второй хуйни отличительные черты:\n");
 
     while (!stack_is_empty(stack2))
     {
         GAME_ERROR_HANDLE(thesis_handle(stack2, &cur_node2, node_data2, NULL),
                                                           stack_dtor(&stack1);stack_dtor(&stack2););
-        puts(node_data2);
+        VOICINGF("%s\n", node_data2);
     }
 
                                                             stack_dtor(&stack1);stack_dtor(&stack2);

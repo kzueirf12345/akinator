@@ -8,50 +8,61 @@
 
 //TODO переписать на нерекурсивный алгоритм, потому что надежнее и быстрее
 
-enum GameError mode_game_recursive_(tree_node_t** node, bool* const do_add_size);
-enum GameError answer_handle_      (tree_node_t** node, bool* const do_add_size);
-enum GameError question_handle_    (tree_node_t** node, bool* const do_add_size);
+enum GameError answer_handle_      (tree_node_t** node, tree_t* const tree);
+enum GameError question_handle_    (tree_node_t** cur_node);
 
 enum GameError mode_game(tree_t* const tree)
 {
     TREE_VERIFY(tree, NULL);
     lassert(tree->size, "");
+    lassert(tree->Groot, "");
 
-    bool do_add_size = false;
+    tree_node_t* prev_node = tree->Groot;
+    tree_node_t* cur_node = tree->Groot;
 
-    GAME_ERROR_HANDLE(mode_game_recursive_(&tree->Groot, &do_add_size));
+    while (cur_node->lt)
+    {
+        lassert((bool)cur_node->lt == (bool)cur_node->rt, "");
 
-    if (do_add_size)
-        tree->size += 2;
+        prev_node = cur_node;
+
+        GAME_ERROR_HANDLE(question_handle_(&cur_node));
+    }
+
+    lassert(prev_node, "");
+
+    if (cur_node == tree->Groot)
+    {
+        GAME_ERROR_HANDLE(answer_handle_(&tree->Groot, tree));
+    }
+    else if (prev_node->lt == cur_node)
+    {
+        GAME_ERROR_HANDLE(answer_handle_(&prev_node->lt, tree));
+    }
+    else
+    {
+        GAME_ERROR_HANDLE(answer_handle_(&prev_node->rt, tree));
+    }
+
     
     return GAME_ERROR_SUCCESS;
 }
 
-enum GameError mode_game_recursive_(tree_node_t** node, bool* const do_add_size)
-{
-    lassert(!is_invalid_ptr(*node), "");
-    lassert((bool)(*node)->lt == (bool)(*node)->rt, "");
-
-    if ((*node)->lt) GAME_ERROR_HANDLE(question_handle_(node, do_add_size));
-    else             GAME_ERROR_HANDLE(answer_handle_  (node, do_add_size));
-
-    return GAME_ERROR_SUCCESS;
-}
-
 #define ANSWER_SIZE_ 10
-enum GameError question_handle_(tree_node_t** node, bool* const do_add_size)
+enum GameError question_handle_(tree_node_t** cur_node)
 {
-    lassert(!is_invalid_ptr(*node), "");
-    lassert((bool)(*node)->lt == (bool)(*node)->rt, "");
+    lassert(!is_invalid_ptr(cur_node), "");
+    lassert(!is_invalid_ptr(*cur_node), "");
+    lassert((bool)(*cur_node)->lt == (bool)(*cur_node)->rt, "");
 
     char* node_data_str = calloc(NODE_DATA_MAX_SIZE, sizeof(char));
-    if (data_to_str((*node)->data, (*node)->size, &node_data_str, NODE_DATA_MAX_SIZE))
+    if (data_to_str((*cur_node)->data, (*cur_node)->size, &node_data_str, NODE_DATA_MAX_SIZE))
     {
         fprintf(stderr, "Can't data_to_str");
         return GAME_ERROR_TREE;
     }
 
-    printf("Хуйня, что ты загадал %s?\n (Ответы 'да' или 'нет')\n", node_data_str);
+    VOICINGF("Хуйня, что ты загадал %s?\n (Ответы 'да' или 'нет')\n", node_data_str);
     free(node_data_str); IF_DEBUG(node_data_str = NULL;)
 
     char answer[ANSWER_SIZE_] = {};
@@ -67,18 +78,20 @@ enum GameError question_handle_(tree_node_t** node, bool* const do_add_size)
 
     if (is_rt == -1)
     {
-        printf("То есть ты реально не смог написать да или нет? ВАВАХВАХ, тогда зарандомлю\n");
+        VOICINGF("То есть ты реально не смог написать да или нет? ВАВАХВАХ, тогда зарандомлю\n");
         is_rt = rand()%2;
     }
 
-    if (is_rt) GAME_ERROR_HANDLE(mode_game_recursive_(&(*node)->rt, do_add_size));
-    else       GAME_ERROR_HANDLE(mode_game_recursive_(&(*node)->lt, do_add_size));
+    if (is_rt) *cur_node = (*cur_node)->rt;
+    else       *cur_node = (*cur_node)->lt;
 
     return GAME_ERROR_SUCCESS;
 }
 
-enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
+enum GameError answer_handle_ (tree_node_t** node, tree_t* const tree)
 {
+    TREE_VERIFY(tree, NULL);
+    lassert(!is_invalid_ptr(node), "");
     lassert(!is_invalid_ptr(*node), "");
     lassert((bool)(*node)->lt == (bool)(*node)->rt, "");
 
@@ -96,7 +109,7 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
         return GAME_ERROR_TREE;
     }
 
-    fprintf(stdout, "Ты загадал '%s'? (Ответы 'да' или 'нет')\n", node_data_str);
+    VOICINGF("Ты загадал '%s'? (Ответы 'да' или 'нет')\n", node_data_str);
 
     if (sleep(2) != 0)
     {
@@ -104,7 +117,7 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
                                                 free(node_data_str); IF_DEBUG(node_data_str = NULL;)
         return GAME_ERROR_STANDARD_ERRNO;
     }
-    fprintf(stdout, "Сосал?\n");
+    VOICINGF("Сосал?\n");
 
     char answer[ANSWER_SIZE_] = {};
     if (scanf("%s", answer) != 1)
@@ -120,20 +133,20 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
 
     if (is_correct == -1)
     {
-        printf("Не умеешь писать - сосёшь бибу\n");
+        VOICINGF("Не умеешь писать - сосёшь бибу\n");
                                                 free(node_data_str); IF_DEBUG(node_data_str = NULL;)
         return GAME_ERROR_SUCCESS;
     }
 
     if (is_correct)
     {
-        printf("Очев + банально + очев. Я знал, ХАХ! Ты лох\n");
+        VOICINGF("Очев + банально + очев. Я знал, ХАХ! Ты лох\n");
                                                 free(node_data_str); IF_DEBUG(node_data_str = NULL;)
         return GAME_ERROR_SUCCESS;
     }
     else
     {
-        printf("Пиздец, ну и что ты нагадал?\n");
+        VOICINGF("Пиздец, ну и что ты нагадал?\n");
 
         char answer_node_data[NODE_DATA_MAX_SIZE] = {};
         if (scanf("\n%[^\n]", answer_node_data) != 1)
@@ -143,7 +156,7 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
             return GAME_ERROR_STANDARD_ERRNO;
         }
 
-        printf("И чем же отличается '%s' от '%s'?\n", answer_node_data, node_data_str);
+        VOICINGF("И чем же отличается '%s' от '%s'?\n", answer_node_data, node_data_str);
 
         char question_node_data[NODE_DATA_MAX_SIZE] = {};
         if (scanf("\n%[^\n]", question_node_data) != 1)
@@ -173,7 +186,7 @@ enum GameError answer_handle_(tree_node_t** node, bool* const do_add_size)
         question_node->rt = answer_node;
         *node = question_node;
 
-        *do_add_size = true;
+        tree->size += 2;
     }
 
                                                 free(node_data_str); IF_DEBUG(node_data_str = NULL;)

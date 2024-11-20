@@ -30,8 +30,8 @@ enum GameError mode_print(flags_objs_t* const flags_objs, const tree_t* const tr
     TREE_VERIFY(tree, NULL);
     lassert(tree->size, "");
 
-    printf("А тебе случаем не надо поменять вывод?"
-           "(Если да, то отправь какое-нибудь правдивое целое число)\n");
+    VOICINGF("А тебе случаем не надо поменять вывод?"
+           " (Если да, то отправь какое-нибудь правдивое целое число)\n");
 
     int do_switch_out = 0;
 
@@ -43,7 +43,7 @@ enum GameError mode_print(flags_objs_t* const flags_objs, const tree_t* const tr
 
     if (!flags_objs->out_file || do_switch_out)
     {
-        printf("Эм, а выводить куда? Если хочешь в консоль (дохуя хочешь) пиши '" 
+        VOICINGF("Эм, а выводить куда? Если хочешь в консоль (дохуя хочешь) пиши '" 
                CONCHOLE_OUT_KEYWORD_ "'\n");
         
         if (scanf("%s", flags_objs->out_filename) != 1)
@@ -73,12 +73,12 @@ enum GameError mode_print(flags_objs_t* const flags_objs, const tree_t* const tr
 
     while (!output_mode)
     {
-        printf(
+        VOICINGF(
             "\n"
-            BOLD_TEXT("%-5u.") " Inorder со скобочками. Для компактных пусек, как ты\n"
-            BOLD_TEXT("%-5u.") " Preorder в виде базы данных."
-                               " Для настоящих любителей жести (не для слабонервныч)\n"
-            BOLD_TEXT("%-5u.") " ЧТО ПРОИСХОДИИИИИИТ?!?!?! + картинка(опционально)\n"
+            "%u. Inorder со скобочками. Для компактных пусек, как ты\n"
+            "%u. Preorder в виде базы данных."
+                               " Для настоящих любителей жести (не для слабонервныx)\n"
+            "%u. ЧТО ПРОИСХОДИИИИИИТ?!?!?! плюс картинка (опционально)\n"
             "Как будем выводить?\n",
             (uint32_t)OUTPUT_MODE_INORDER,
             (uint32_t)OUTPUT_MODE_PREORDER,
@@ -112,7 +112,7 @@ enum GameError mode_print(flags_objs_t* const flags_objs, const tree_t* const tr
             case OUTPUT_MODE_AGAIN:
             default:
             {
-                printf("Выбирай заново, хули. В этот раз " RED_TEXT("ЧИТАТЬ") " будешь?\n");
+                VOICINGF("Выбирай заново, хули. В этот раз " "ЧИТАТЬ" " будешь?\n");
                 output_mode = OUTPUT_MODE_AGAIN;
                 break;
             }

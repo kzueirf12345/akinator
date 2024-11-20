@@ -11,7 +11,7 @@ enum GameError mode_definition(tree_t* const tree)
 {
     TREE_VERIFY(tree, NULL);
 
-    printf("\nСам определил и сам не запомнил) Ну пиши, как там твоя хуйня называется\n");
+    VOICINGF("\nСам определил и сам не запомнил) Ну пиши, как там твоя хуйня называется\n");
 
     char node_data[NODE_DATA_MAX_SIZE] = {};
     if (scanf("\n%[^\n]", node_data) != 1)
@@ -25,7 +25,7 @@ enum GameError mode_definition(tree_t* const tree)
 
     if (!fill_def_stack(tree->Groot, node_data, stack))
     {
-        printf("Может не будешь всякий бред придумывать, электричество тратить попросту?\n");
+        VOICINGF("Может не будешь всякий бред придумывать, электричество тратить попросту?\n");
                                                                                  stack_dtor(&stack);
         return GAME_ERROR_SUCCESS;
     }
@@ -36,14 +36,14 @@ enum GameError mode_definition(tree_t* const tree)
         return GAME_ERROR_SUCCESS;
     }
 
-    printf("Определение '%s':\n", node_data);
+    VOICINGF("Определение '%s':\n", node_data);
 
     tree_node_t* cur_node = tree->Groot;
 
     while (!stack_is_empty(stack))
     {
         GAME_ERROR_HANDLE(thesis_handle(stack, &cur_node, node_data, NULL),    stack_dtor(&stack););
-        puts(node_data);
+        VOICINGF("%s\n", node_data);
     }
 
                                                                                  stack_dtor(&stack);

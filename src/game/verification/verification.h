@@ -2,6 +2,9 @@
 #define AKINATOR_SRC_GAME_VERIFICATION_VERIFICATION_H
 
 #include <assert.h>
+#include <verification/verification.h>
+#include <stack_on_array/libstack.h>
+#include <voicing/voicing.h>
 
 enum GameError
 {
@@ -9,7 +12,8 @@ enum GameError
     GAME_ERROR_STANDARD_ERRNO   = 1,
     GAME_ERROR_TREE             = 2,
     GAME_ERROR_STACK            = 3,
-    GAME_ERROR_TI_PIDOR         = 4,
+    GAME_ERROR_VOICING          = 4,
+    GAME_ERROR_TI_PIDOR         = 5,
 };
 static_assert(GAME_ERROR_SUCCESS  == 0);
 
@@ -52,6 +56,17 @@ const char* game_strerror(const enum GameError error);
         }                                                                                           \
     } while(0)
 
+#define VOICING_ERROR_HANDLE_(call_func, ...)                                                         \
+    do {                                                                                            \
+        enum VoicingError error_handler = call_func;                                                  \
+        if (error_handler)                                                                          \
+        {                                                                                           \
+            fprintf(stderr, "Can't " #call_func". Error: %s\n",                                     \
+                            voicing_strerror(error_handler));                                         \
+            __VA_ARGS__                                                                             \
+            return GAME_ERROR_STACK;                                                                \
+        }                                                                                           \
+    } while(0)
 
 #define NODE_DATA_MAX_SIZE 255
 

@@ -12,8 +12,8 @@ enum GameError mode_create(flags_objs_t* const flags_objs, tree_t* const tree)
     lassert(!is_invalid_ptr(flags_objs), "");
     TREE_VERIFY(tree, NULL);
 
-    printf("А тебе случаем не надо поменять ввод?"
-           "(Если да, то отправь какое-нибудь правдивое целое число)\n");
+    VOICINGF("А тебе случаем не надо поменять ввод? ");
+    VOICINGF("(Если да, то отправь какое-нибудь правдивое целое число)\n");
 
     int do_switch_in = 0;
 
@@ -25,7 +25,7 @@ enum GameError mode_create(flags_objs_t* const flags_objs, tree_t* const tree)
 
     if (!*flags_objs->in_filename || do_switch_in)
     {
-        printf("Эм, а данные брать откуда?\n");
+        VOICINGF("Эм, а данные брать откуда?\n");
         
         if (scanf("%s", flags_objs->in_filename) != 1)
         {
@@ -40,7 +40,7 @@ enum GameError mode_create(flags_objs_t* const flags_objs, tree_t* const tree)
         }
     }
     
-    printf(
+    VOICINGF(
         "Перед заполнением нового никому ненужного дерева "
             "стоит удалить прошлое никому не нужное дерево?\n"
         "Ответы 1 или 0, думаю, очевидно.\n");
@@ -54,7 +54,7 @@ enum GameError mode_create(flags_objs_t* const flags_objs, tree_t* const tree)
 
     if (temp_ans != 1 && temp_ans != 0)
     {
-        printf("Ой, иди ты в пизду, вернусь с ошибкой");
+        VOICINGF("Ой, иди ты в пизду, вернусь с ошибкой");
         return GAME_ERROR_TI_PIDOR;
     }
 
@@ -62,7 +62,7 @@ enum GameError mode_create(flags_objs_t* const flags_objs, tree_t* const tree)
         tree_dtor(tree);
     else
     {
-        printf(ITALIC_TEXT("Ссыкло...\n"));
+        VOICINGF(ITALIC_TEXT("Ссыкло...\n"));
         return GAME_ERROR_SUCCESS;
     }
     

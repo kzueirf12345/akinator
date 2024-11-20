@@ -46,10 +46,7 @@ enum GameError do_akinator(flags_objs_t* const flags_objs)
         {
             case MODE_END:
             {
-                printf(RED_TEXT(
-                    "\nНУ И СЪЁБЫВАЙ!!!\n"
-                    "Донаты: 1423 5234 7543 6345\n"
-                ));
+                VOICINGF("\nНУ И СЪЁБЫВАЙ!!!\n Донаты: 1423 5234 7543 6345\n");
                 break;
             }
             case MODE_GAME:
@@ -89,7 +86,7 @@ enum GameError do_akinator(flags_objs_t* const flags_objs)
                 break;
             }
             default:
-                printf("Научись читать, карсак!\n");
+                VOICINGF("Научись читать, карсак!\n");
                 break;
         }
 
@@ -142,6 +139,25 @@ enum GameError choose_mode_(enum Mode* const mode)
         (uint32_t)MODE_PRINT,
         (uint32_t)MODE_TEST
     );
+
+    VOICING_ERROR_HANDLE_(voicing(
+        "\nЭто программа Хуепокрыватор, приносим извенения за все оскоробления!\n\n"
+        "%u. Пойти нахуй.\n"
+        "%u. Гамаем.\n"
+        "%u. Определяем ориентацию.\n"
+        "%u. В чём разница между дедом и квадробером?\n"
+        "%u. Загружаем твоё говно.\n"
+        "%u. Выгружаем твоё говно (оно реально тебе нужно?).\n"
+        "%u. Для хуесосов (программистов)\n"
+        "Укажите режим игры:\n",
+        (uint32_t)MODE_END,
+        (uint32_t)MODE_GAME,
+        (uint32_t)MODE_DEFINITION,
+        (uint32_t)MODE_COMPARE,
+        (uint32_t)MODE_CREATE,
+        (uint32_t)MODE_PRINT,
+        (uint32_t)MODE_TEST
+    ));
     
     if (scanf("%u", (uint32_t*)mode) != 1)
     {
@@ -149,7 +165,7 @@ enum GameError choose_mode_(enum Mode* const mode)
         return GAME_ERROR_STANDARD_ERRNO;
     }
 
-    printf("Получше ничего не придумал?\n");
+    VOICINGF("Получше ничего не придумал?\n");
 
     return GAME_ERROR_SUCCESS;
 }
