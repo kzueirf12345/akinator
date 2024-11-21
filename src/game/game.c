@@ -146,8 +146,8 @@ enum GameError choose_mode_(enum Mode* const mode)
         "%u. Гамаем.\n"
         "%u. Определяем ориентацию.\n"
         "%u. В чём разница между дедом и квадробером?\n"
-        "%u. Загружаем твоё говно.\n"
-        "%u. Выгружаем твоё говно (оно реально тебе нужно?).\n"
+        "%u. Загружаем твоё говнo.\n"
+        "%u. Выгружаем твоё говнo (оно реально тебе нужно?).\n"
         "%u. Для хуесосов (программистов)\n"
         "Укажите режим игры:\n",
         (uint32_t)MODE_END,
@@ -159,7 +159,7 @@ enum GameError choose_mode_(enum Mode* const mode)
         (uint32_t)MODE_TEST
     ));
     
-    if (scanf("%u", (uint32_t*)mode) != 1)
+    if (scanf("%u", (uint32_t*)mode) != 1) // TODO check input
     {
         perror("Can't scanf mode");
         return GAME_ERROR_STANDARD_ERRNO;

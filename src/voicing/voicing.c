@@ -4,6 +4,8 @@
 #include "logger/liblogger.h"
 #include "utils/utils.h"
 
+//TODO voicing smth not all it's boring
+
 #define CASE_ENUM_TO_STRING_(error) case error: return #error
 const char* voicing_strerror(const enum VoicingError error)
 {
@@ -22,6 +24,8 @@ const char* voicing_strerror(const enum VoicingError error)
 enum VoicingError voicing(const char* const format, ...)
 {
     lassert(!is_invalid_ptr(format), "");
+    
+#ifdef VOICING_ON
 
     char temp_str[MAX_SYSTEM_STR_SIZE_] = {};
 
@@ -54,7 +58,8 @@ enum VoicingError voicing(const char* const format, ...)
         perror("Can't system system_str");
         return VOICING_ERROR_FAILURE;
     }
+#endif /*VOICING_ON*/
     
     return VOICING_ERROR_SUCCESS;
 }
-#undef MAX_SYSTEM_STR_SIZE_ 
+#undef MAX_SYSTEM_STR_SIZE_     

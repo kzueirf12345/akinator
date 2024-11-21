@@ -26,6 +26,8 @@ const char* voicing_strerror(const enum VoicingError error);
 
 enum VoicingError voicing(const char* const format, ...);
 
+//TODO - wrapper va_list
+
 #define VOICINGF(format, ...)                                                                       \
     do                                                                                              \
     {                                                                                               \

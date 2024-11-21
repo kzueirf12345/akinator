@@ -55,15 +55,14 @@ enum GameError question_handle_(tree_node_t** cur_node)
     lassert(!is_invalid_ptr(*cur_node), "");
     lassert((bool)(*cur_node)->lt == (bool)(*cur_node)->rt, "");
 
-    char* node_data_str = calloc(NODE_DATA_MAX_SIZE, sizeof(char));
-    if (data_to_str((*cur_node)->data, (*cur_node)->size, &node_data_str, NODE_DATA_MAX_SIZE))
+    char node_data_str[NODE_DATA_MAX_SIZE] = {};
+    if (data_to_str((*cur_node)->data, (*cur_node)->size, node_data_str, NODE_DATA_MAX_SIZE))
     {
         fprintf(stderr, "Can't data_to_str");
         return GAME_ERROR_TREE;
     }
 
     VOICINGF("Хуйня, что ты загадал %s?\n (Ответы 'да' или 'нет')\n", node_data_str);
-    free(node_data_str); IF_DEBUG(node_data_str = NULL;)
 
     char answer[ANSWER_SIZE_] = {};
     if (scanf("%s", answer) != 1)
@@ -95,7 +94,7 @@ enum GameError answer_handle_ (tree_node_t** node, tree_t* const tree)
     lassert(!is_invalid_ptr(*node), "");
     lassert((bool)(*node)->lt == (bool)(*node)->rt, "");
 
-    char* node_data_str = calloc(NODE_DATA_MAX_SIZE, sizeof(char));
+    char* node_data_str = calloc(NODE_DATA_MAX_SIZE, sizeof(char)); // FIXME
 
     if (!node_data_str)
     {
@@ -103,7 +102,7 @@ enum GameError answer_handle_ (tree_node_t** node, tree_t* const tree)
         return GAME_ERROR_SUCCESS;
     }
 
-    if (data_to_str((*node)->data, (*node)->size, &node_data_str, NODE_DATA_MAX_SIZE))
+    if (data_to_str((*node)->data, (*node)->size, node_data_str, NODE_DATA_MAX_SIZE))
     {
         fprintf(stderr, "Can't data_to_str");
         return GAME_ERROR_TREE;
@@ -111,7 +110,7 @@ enum GameError answer_handle_ (tree_node_t** node, tree_t* const tree)
 
     VOICINGF("Ты загадал '%s'? (Ответы 'да' или 'нет')\n", node_data_str);
 
-    if (sleep(2) != 0)
+    if (sleep(2) != 0) // TODO make const
     {
         perror("I can't sleep...");
                                                 free(node_data_str); IF_DEBUG(node_data_str = NULL;)
@@ -144,50 +143,48 @@ enum GameError answer_handle_ (tree_node_t** node, tree_t* const tree)
                                                 free(node_data_str); IF_DEBUG(node_data_str = NULL;)
         return GAME_ERROR_SUCCESS;
     }
-    else
+    
+    VOICINGF("Пиздец, ну и что ты нагадал?\n");
+
+    char answer_node_data[NODE_DATA_MAX_SIZE] = {};
+    if (scanf("\n%[^\n]", answer_node_data) != 1)
     {
-        VOICINGF("Пиздец, ну и что ты нагадал?\n");
-
-        char answer_node_data[NODE_DATA_MAX_SIZE] = {};
-        if (scanf("\n%[^\n]", answer_node_data) != 1)
-        {
-            perror("Can't scanf answer_node_data");
-                                                free(node_data_str); IF_DEBUG(node_data_str = NULL;)
-            return GAME_ERROR_STANDARD_ERRNO;
-        }
-
-        VOICINGF("И чем же отличается '%s' от '%s'?\n", answer_node_data, node_data_str);
-
-        char question_node_data[NODE_DATA_MAX_SIZE] = {};
-        if (scanf("\n%[^\n]", question_node_data) != 1)
-        {
-            perror("Can't scanf answer_node_data");
-                                                free(node_data_str); IF_DEBUG(node_data_str = NULL;)
-            return GAME_ERROR_STANDARD_ERRNO;
-        }
-
-        tree_node_t* answer_node = tree_node_ctor(answer_node_data, NODE_DATA_MAX_SIZE);
-        if (!answer_node)
-        {
-            fprintf(stderr, "Can't ctor answer_node\n");
-                                                free(node_data_str); IF_DEBUG(node_data_str = NULL;)
-            return GAME_ERROR_TREE;
-        }
-
-        tree_node_t* question_node = tree_node_ctor(question_node_data, NODE_DATA_MAX_SIZE);
-        if (!question_node)
-        {
-            fprintf(stderr, "Can't ctor question_node\n");
-                                                free(node_data_str); IF_DEBUG(node_data_str = NULL;)
-            return GAME_ERROR_TREE;
-        }
-
-        question_node->lt = *node;
-        question_node->rt = answer_node;
-        *node = question_node;
-
-        tree->size += 2;
+        perror("Can't scanf answer_node_data");
+                                            free(node_data_str); IF_DEBUG(node_data_str = NULL;)
+        return GAME_ERROR_STANDARD_ERRNO;
     }
+
+    VOICINGF("И чем же отличается '%s' от '%s'?\n", answer_node_data, node_data_str);
+
+    char question_node_data[NODE_DATA_MAX_SIZE] = {};
+    if (scanf("\n%[^\n]", question_node_data) != 1)
+    {
+        perror("Can't scanf answer_node_data");
+                                            free(node_data_str); IF_DEBUG(node_data_str = NULL;)
+        return GAME_ERROR_STANDARD_ERRNO;
+    }
+
+    tree_node_t* answer_node = tree_node_ctor(answer_node_data, NODE_DATA_MAX_SIZE);
+    if (!answer_node)
+    {
+        fprintf(stderr, "Can't ctor answer_node\n");
+                                            free(node_data_str); IF_DEBUG(node_data_str = NULL;)
+        return GAME_ERROR_TREE;
+    }
+
+    tree_node_t* question_node = tree_node_ctor(question_node_data, NODE_DATA_MAX_SIZE);
+    if (!question_node)
+    {
+        fprintf(stderr, "Can't ctor question_node\n");
+                                            free(node_data_str); IF_DEBUG(node_data_str = NULL;)
+        return GAME_ERROR_TREE;
+    }
+
+    question_node->lt = *node;
+    question_node->rt = answer_node;
+    *node = question_node;
+
+    tree->size += 2;
 
                                                 free(node_data_str); IF_DEBUG(node_data_str = NULL;)
 

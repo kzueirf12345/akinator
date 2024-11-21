@@ -18,9 +18,9 @@ tree_node_t* tree_node_ctor(const void* const data, const size_t size)
         return NULL;
     }
 
-    tree_node->size      = size;
-    tree_node->lt        = NULL;
-    tree_node->rt        = NULL;
+    tree_node->size     = size;
+    tree_node->lt       = NULL;
+    tree_node->rt       = NULL;
 
     tree_node->data = calloc(1, size);
 

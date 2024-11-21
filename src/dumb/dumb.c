@@ -387,10 +387,10 @@ int create_tree_dot_recursive_(const tree_node_t* const node, const size_t tree_
     const size_t data_str_size = 4 * node->size;
     char* data_str = calloc(data_str_size, sizeof(char));
 
-    if (data_str && !elem_to_str(node->data, node->size, &data_str, data_str_size)) 
+    if (data_str && !elem_to_str(node->data, node->size, data_str, data_str_size)) 
     {
         fprintf(DUMBER_.dot_file, 
-                "node%zu [shape=Mrecord; label = \" %zu | %s\"];\n",
+                "node%zu [shape=Mrecord; label = \" %zu | '%s'\"];\n",
                 node_count_, node_count_, data_str);
     }
 
