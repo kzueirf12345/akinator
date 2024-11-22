@@ -53,7 +53,7 @@ enum TreeError tree_print_inorder_recursive_(FILE* out, const tree_node_t* const
         return TREE_ERROR_STANDARD_ERRNO;
     }
 
-    if (elem_to_str(node->data, node->size, &data_str, data_str_size))
+    if (elem_to_str(node->data, node->size, data_str, data_str_size))
     {
         fprintf(stderr, "Can't elem_to_str\n");
         return TREE_ERROR_ELEM_TO_STR;
@@ -122,7 +122,7 @@ enum TreeError tree_print_preorder_recursive_(FILE* out, const tree_node_t* cons
         return TREE_ERROR_STANDARD_ERRNO;
     }
 
-    if (elem_to_str(node->data, node->size, &data_str, data_str_size))
+    if (elem_to_str(node->data, node->size, data_str, data_str_size))
     {
         fprintf(stderr, "Can't elem_to_str\n");
         return TREE_ERROR_ELEM_TO_STR;

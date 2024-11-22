@@ -58,5 +58,4 @@ dkms.conf
 log/
 CMakePresets.json
 
-*.txt
 doxygen
