@@ -44,13 +44,16 @@ endif
 
 FLAGS += $(ADD_FLAGS)
 
-LIBS = -L./libs/logger -llogger
+LIBS = -L./libs/logger -llogger -L./libs/stack_on_array -lstack
 
 
-DIRS = tree utils verification dumb
+DIRS = tree utils verification dumb flags game game/modes game/verification tree/node voicing
 BUILD_DIRS = $(DIRS:%=$(BUILD_DIR)/%)
 
-SOURCES = main.c tree/tree.c utils/utils.c verification/verification.c dumb/dumb.c
+SOURCES = main.c tree/tree.c utils/utils.c verification/verification.c dumb/dumb.c flags/flags.c \
+		  game/game.c game/modes/test.c game/modes/print.c game/modes/create.c game/modes/game.c \
+		  game/modes/definition.c game/verification/verification.c game/modes/compare.c \
+		  tree/node/node.c tree/fill_from_file.c tree/prints.c voicing/voicing.c
 
 SOURCES_REL_PATH = $(SOURCES:%=$(SRC_DIR)/%)
 OBJECTS_REL_PATH = $(SOURCES:%.c=$(BUILD_DIR)/%.o)
@@ -71,8 +74,8 @@ rebuild: clean_all build
 $(PROJECT_NAME).out: $(OBJECTS_REL_PATH)
 	@$(COMPILER) $(FLAGS) -o $@ $^  $(LIBS)
 
-$(BUILD_DIR)/%.o : $(SRC_DIR)/%.c | ./$(BUILD_DIR)/ $(BUILD_DIRS) logger_build
-	@$(COMPILER) $(FLAGS) -I $(SRC_DIR)/utils -I./libs -c -MMD -MP $< -o $@
+$(BUILD_DIR)/%.o : $(SRC_DIR)/%.c | ./$(BUILD_DIR)/ $(BUILD_DIRS) logger_build stack_build
+	@$(COMPILER) $(FLAGS) -I./libs -I$(SRC_DIR) -c -MMD -MP $< -o $@
 
 -include $(DEPS_REL_PATH)
 
@@ -90,9 +93,17 @@ logger_build:
 logger_clean:
 	make ADD_FLAGS="$(ADD_FLAGS)" clean -C ./libs/logger
 
+stack_rebuild: stack_build stack_clean
+
+stack_build:
+	@make ADD_FLAGS="$(ADD_FLAGS)" FLAGS="$(FLAGS)" DEBUG_=$(DEBUG_) build -C ./libs/stack_on_array
+
+stack_clean:
+	make ADD_FLAGS="$(ADD_FLAGS)" clean -C ./libs/stack_on_array
 
 
-clean_all: clean_obj clean_deps clean_out logger_clean
+
+clean_all: clean_obj clean_deps clean_out logger_clean stack_clean
 
 clean: clean_obj clean_deps clean_out
 

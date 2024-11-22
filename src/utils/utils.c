@@ -4,13 +4,34 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "utils.h"
 #include "logger/liblogger.h"
 
+char* to_lower(char* const str) 
+{
+    lassert(!is_invalid_ptr(str), "");
+
+    for (size_t ind = 0; str[ind] != '\0'; ++ind) 
+        str[ind] = (char)tolower(str[ind]);
+
+    return str;
+}
+
+char* to_upper(char* const str) 
+{
+    lassert(!is_invalid_ptr(str), "");
+
+    for (size_t ind = 0; str[ind] != '\0'; ++ind) 
+        str[ind] = (char)toupper(str[ind]);
+
+    return str;
+}
+
 enum PtrState is_invalid_ptr(const void* ptr)
 {
-    lassert(!errno, "errno: %s", strerror(errno));
+    // lassert(!errno, "errno: %s", strerror(errno));
 
     if (ptr == NULL)
     {
@@ -90,8 +111,8 @@ int is_empty_file (FILE* file)
 
 #define TREE_INOUT_ELEM_SIZE sizeof(TREE_INOUT_ELEM_T)
 
-int data_to_str(const void* const data, const size_t size, char* const * str,
-                   const size_t str_size)
+int data_to_str(const void* const data, const size_t size, char* str,
+                   const size_t str_size) // TODO str is char* 
 {
     if (is_invalid_ptr(data)) return -1;
     if (is_invalid_ptr(str))  return -1;
@@ -120,7 +141,7 @@ int data_to_str(const void* const data, const size_t size, char* const * str,
             }
         }
 
-        if (!strncat(*str, temp_str, str_size))
+        if (!strncat(str, temp_str, str_size))
         {
             perror("Can't stract str and temp_str");
             return -1;
