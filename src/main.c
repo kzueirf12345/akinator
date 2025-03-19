@@ -10,9 +10,6 @@
 #include "flags/flags.h"
 #include "game/game.h"
 
-//TODO if in 3 mode on empty out
-//TODO festival for audio lib
-
 int logger_init(char* const log_folder);
 int logger_destroy(void);
 
